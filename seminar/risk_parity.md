@@ -239,13 +239,13 @@ summary(comps)
 ```
 ## Importance of components:
 ##                           PC1    PC2    PC3     PC4     PC5     PC6
-## Standard deviation     0.2164 0.1524 0.1276 0.07006 0.03456 0.02249
+## Standard deviation     0.2164 0.1524 0.1276 0.07006 0.03456 0.02250
 ## Proportion of Variance 0.5034 0.2496 0.1752 0.05277 0.01284 0.00544
-## Cumulative Proportion  0.5034 0.7530 0.9282 0.98096 0.99381 0.99925
-##                             PC7      PC8      PC9
-## Standard deviation     0.007931 0.002475 0.001071
-## Proportion of Variance 0.000680 0.000070 0.000010
-## Cumulative Proportion  0.999920 0.999990 1.000000
+## Cumulative Proportion  0.5034 0.7530 0.9282 0.98096 0.99380 0.99925
+##                             PC7      PC8     PC9
+## Standard deviation     0.007929 0.002472 0.00107
+## Proportion of Variance 0.000680 0.000070 0.00001
+## Cumulative Proportion  0.999920 0.999990 1.00000
 ```
 
 De aquí concluimos que el 90\% de la volatilidad es explicada por los primeros tres portafolios principales.
@@ -259,9 +259,9 @@ evec[, 1]
 
 ```
 ## IYC.Adjusted IYE.Adjusted IYH.Adjusted IYR.Adjusted IYW.Adjusted 
-## -0.278655728 -0.669275021 -0.400450899 -0.109957583 -0.515244250 
+## -0.278655953 -0.669279741 -0.400452677 -0.109961617 -0.515242658 
 ## TLT.Adjusted TLH.Adjusted IEF.Adjusted SHY.Adjusted 
-##  0.127907883  0.106966802  0.092919738  0.007569742
+##  0.127904775  0.106938136  0.092918739  0.007569657
 ```
 
 El primer portafolio principal toma posiciones dependiendo del tipo de activo, es decir, la dirección del primer componente principal distingue entre acciones y bonos pues los activos de renta variable tienen signo opuesto a los activos de renta fija:
@@ -280,9 +280,9 @@ evec[, 2]
 
 ```
 ## IYC.Adjusted IYE.Adjusted IYH.Adjusted IYR.Adjusted IYW.Adjusted 
-## -0.195028046  0.309961199 -0.498707153 -0.429007823 -0.050849437 
+## -0.195023294  0.309972204 -0.498695448 -0.428997028 -0.050861662 
 ## TLT.Adjusted TLH.Adjusted IEF.Adjusted SHY.Adjusted 
-## -0.557012266 -0.290204437 -0.189768014 -0.007261893
+## -0.557006880 -0.290241159 -0.189766473 -0.007261606
 ```
 
 En este caso el IYE es el único instrumento con signo opuesto a los demás. Este instrumento es el Dow Jones US Energy Index que replica el valor de una canasta de energéticos. Como el petróleo es el energético con más influencia en el valor del índice, concluimos que **la segunda fuente de riesgo es "petróleo"**.
@@ -344,7 +344,7 @@ Como vimos, en nuestro ejemplo:
 * El primer portafolio principal representa la fuente de riesgo "mercado"
 * El segundo portafolio principal representa la fuente de riesgo "petróleo"
 
-A partir de los renglones de la matriz de eigenvectores $(\mathbf{P})_{i,\bullet}$, veamos los loadings del IYE. Estos son los coeficientes de una regresión donde los retornos anuales del IYE son la variable dependiente y los rendimientos anuales de los portafolios principales son las variables dependientes.
+A partir de los renglones de la matriz de eigenvectores $(\mathbf{P})_{i,\bullet}$, veamos los loadings del IYE. Estos son los coeficientes de una transformación donde los retornos anuales del IYE son la variable dependiente y los rendimientos anuales de los portafolios principales son las variables dependientes.
 
 
 ```r
@@ -353,9 +353,9 @@ evec['IYE.Adjusted', ]
 
 ```
 ##           PC1           PC2           PC3           PC4           PC5 
-## -0.6692750209  0.3099611990 -0.5572012905 -0.3710582171  0.0757122280 
+## -0.6692797410  0.3099722036 -0.5571854080 -0.3710564555  0.0757383625 
 ##           PC6           PC7           PC8           PC9 
-## -0.0424799764 -0.0167738178 -0.0004066244 -0.0043711307
+## -0.0424959565 -0.0167915341 -0.0004475392 -0.0043620474
 ```
 
 Denotemos por $\mathbf{p}_{\text{IYE},j}$ al $j$-ésimo loading del IYE. La varianza del IYE puede ser descompuesta en la suma de las varianzas de los portafolios principales $\lambda_j$s con la siguiente regla (pues los portafolios principales son ortogonales)
@@ -392,4 +392,188 @@ Si invertimos el 63\% restante del portafolio en el TLT en vez de efectivo, ento
 * 0.0360 $=\sqrt{((0.37 \mathbf{p}_{\text{IYE},2} + 0.63 \mathbf{p}_{\text{TLT},2})^2 \lambda_2}$ es el riesgo del portafolio que proviene de la fuente “petróleo”
 
 Como vemos, ¡hemos construido un portafolio cuyas asignaciones en riesgo de mercado y petróleo se encuentra perfectamente equilibradas! De esta manera, **hemos diversificado el riesgo del portafolio proveniente de estas dos fuentes de riesgo**. 
+
+## Portafolio Tradicional
+
+Un portafolio constituido por:
+
+* 60% en el S&P 500 y
+* 40% en el Bloomberg Barclays US Aggregate Bond Index.
+
+
+```r
+#install.packages('mltools')
+library(mltools)
+```
+
+![](risk_parity_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+
+
+```r
+traditional_sdRet <- get_sdRet_from_dlyChg(
+  traditional_dlyChg, method = 'arithmetic') * c(0.6, 0.4)
+
+traditional_sdRet / sum(traditional_sdRet)
+```
+
+```
+## SPY.Adjusted AGG.Adjusted 
+##    0.8695561    0.1304439
+```
+
+* Multipliquemos el riesgo del S&P 500 por $0.6$ y el riesgo del AGG por $0.4$.
+* Calculemos la proporción que representan estos riesgos con respecto a la suma de los dos
+    + El riesgo del SPY representa el 86.96% de la suma del riesgo de los ETFs
+    + El riesgo del AGG representa el 13.04%.
+
+**La asignación de riesgo de la combinación 60/40 se encuentra poco balanceada**.
+
+## ETFs Multiactivos
+
+* **ETF's multiactivos**
+    * ACWI - MSCI's All Country World Index - índice de capitalización de mercado de acciones listadas en todo el mundo
+    * EEM - Emerging Markets Index - índice de capitalización de mercado de acciones listadas en países emergentes
+    * USO -  Front Month Light Sweet Crude Oil Index - fondo compuesto por futuros de precios de petróleo
+    * GLD - Precio del oro - fondo invertido directamente en oro físico
+    * UUP - Deutsche Bank Long USD Currency Portfolio Index - índice que representa la fortaleza del dólar americano relativo a una canasta de seis monedas: el euro, el yen, la libra, el dólar canadiense, la corona sueca y el franco suizo.
+
+
+
+![](risk_parity_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
+
+## Paridad de Riesgo Ingenua
+
+La construcción de portafolios con **paridad ingenua de riesgo** consiste en asignar a cada activo $i$ un peso dado por 
+
+$$
+h_i =\frac{1/\hat\sigma_i}{\sum_{i = 1}^n 1/\hat\sigma_i} \;.
+$$
+
+**Con los pesos de paridad ingenua, se cumple que** 
+
+$$\hat\sigma_1 h_1 = \hat\sigma_2 h_2 = \ldots = \hat\sigma_n h_n$$
+
+Si el riesgo de un portafolio fuera la suma ponderada de los riesgos de sus componentes entonces, usando los pesos de paridad ingenua de riesgo, cada componente aportaría la misma cantidad de riesgo.
+
+
+
+
+```r
+sdRet * naiveParity_weights
+```
+
+```
+## ACWI.Adjusted  EEM.Adjusted  USO.Adjusted  TLT.Adjusted  IEF.Adjusted 
+##  0.0008252527  0.0008252527  0.0008252527  0.0008252527  0.0008252527 
+##  GLD.Adjusted  UUP.Adjusted 
+##  0.0008252527  0.0008252527
+```
+
+**El inconveniente de los pesos de paridad de riesgo es que ignoran las correlaciones que existen entre los activos*
+
+## Paridad de Contribución al Riesgo
+
+**contribución marginal al riesgo**
+
+A $\frac{\partial\hat\sigma_\text{p}}{\partial h_i}$ lo llamaremos la contribución marginal al riesgo del componente $i$ del portafolio. El vector de contribuciones marginales al riesgo está dado por $\frac{\hat\Sigma h}{\sqrt{h^T \hat\Sigma h}}$.
+
+$$
+\frac{\partial\widehat\sigma_\text{p}}{\partial h_i} = \frac{\sum_j \widehat\sigma_{ij} h^j}{\sqrt{h^T \hat\Sigma h}} = \frac{(\Sigma h)_i}{\sqrt{h^T \hat\Sigma h}} \;.
+$$
+
+**contribución total al riesgo del componente $i$ del portafolio**
+
+A $h_i\frac{\partial\hat\sigma_\text{p}}{\partial h_i}$ lo llamaremos la contribución total al riesgo del componente $i$ del portafolio.
+
+$$
+\sum_i h_i\frac{(\hat\Sigma h)_i}{\sqrt{h^T \hat\Sigma h}}=\frac{h^T \hat\Sigma h}{\sqrt{h^T \hat\Sigma h}} = \sqrt{h^T \hat\Sigma h} \;.
+$$
+
+Se cumple que el riesgo total del portafolio es la suma de las contribuciones totales al riesgo pues
+
+**formulación del problema de paridad de contribución al riesgo**
+
+Encontrar **un portafolio tal que las contribuciones totales al riesgo sean igual para todas las componentes del portafolio**
+
+$$
+\begin{aligned}
+\min_{h} & & 
+\sum_i\sum_j\left(h_i(\Sigma h)_i - h_j(\Sigma h)_j\right)^2 \\
+\text{sujeto a} & &
+h^T \mathbf{1} = 1\\
+& &h \geq 0
+\end{aligned}
+$$
+
+**Con los pesos de paridad de contribución al riesgo, se cumple que**
+
+$$h_1(\hat\Sigma h)_1 = h_2(\hat\Sigma h)_2 = \ldots = h_n(\hat\Sigma h)_n$$
+
+
+
+
+```r
+contribParity_weights * covRet %*% contribParity_weights
+```
+
+```
+##                       [,1]
+## ACWI.Adjusted 5.448808e-07
+## EEM.Adjusted  5.448808e-07
+## USO.Adjusted  5.448808e-07
+## TLT.Adjusted  5.448807e-07
+## IEF.Adjusted  5.448807e-07
+## GLD.Adjusted  5.448807e-07
+## UUP.Adjusted  5.448807e-07
+```
+
+## Paridad de Fuentes de Riesgo
+
+Si invertimos $h$ en un portafolio, entonces invertimos $\mathbf{p}_i^\top h$ en el $i$-ésimo portafolio principal
+
+$$
+\lambda_i (\mathbf{p}_i^\top h)^2 = \lambda_j (\mathbf{p}_j^\top h)^2 \quad \text{ para toda } \quad i,j = 1,...,K.
+$$
+
+**formulación del problema de paridad de fuentes de riesgo**
+
+$$
+\begin{aligned}
+\min_{h} & & \sum_i\sum_j 
+\left( \lambda_i (\mathbf{p}_i^\top h)^2  - \lambda_j (\mathbf{p}_j^\top h)^2 \right)^2\\
+\text{sujeto a} & & h^T \mathbf{1} = 1 \\
+& & h \geq 0
+\end{aligned}
+$$
+
+**Con los pesos de paridad de fuentes de riesgo se cumple, eligiendo tres fuentes de riesgo, que**
+
+$$\lambda_1 (p_1^\top h)^2 = \lambda_j (p_2^\top h)^2= \lambda_i (p_3^\top h)^2$$
+
+
+
+
+```r
+eval * (principal_parity_weights %*% evec)^2
+```
+
+```
+##              [,1]         [,2]         [,3]         [,4]         [,5]
+## [1,] 2.897087e-06 2.897087e-06 2.897087e-06 7.374374e-07 5.974747e-08
+##              [,6]         [,7]
+## [1,] 3.351883e-07 8.721273e-09
+```
+
+## Índices de Paridad de Riesgo
+
+* Se calculan los pesos diarios de paridad de riesgo
+* Se construyen portafolios con rebalanceos diarios
+
+**retorno acumulado**
+
+<img src="./figure/riskParity_index.png" width="80%" style="display: block; margin: auto;" />
+
+**relación riesgo-rendimiento**
+
+<img src="./figure/riskParity_riskReward.png" width="80%" style="display: block; margin: auto;" />
 
