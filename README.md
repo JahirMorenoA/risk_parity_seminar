@@ -12,5 +12,7 @@ Then go to `localhost:8787` in the browser.
 
 Within Rstudio use rstudio/seminar when asked for user/password and go to /home/rstudio/seminar/
 
+Link to notebook:
 
+https://audiracmichelle.github.io/risk_parity_seminar/seminar/intro.html
 
