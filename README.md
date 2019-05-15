@@ -15,4 +15,4 @@ Within Rstudio use rstudio/seminar when asked for user/password and go to /home/
 Link to notebook:
 
 https://audiracmichelle.github.io/risk_parity_seminar/seminar/intro.html
-
+https://audiracmichelle.github.io/risk_parity_seminar/seminar/risk_parity.html
